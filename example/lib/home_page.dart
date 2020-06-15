@@ -1,33 +1,32 @@
-import 'package:cloudpaymentsflutter/cloudpaymentsflutter.dart';
+import 'dart:async';
+
 import 'package:cloudpaymentsflutter/payment_parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HomePage extends StatelessWidget {
-  BuildContext context;
+class Cloudpaymentsflutter {
+  static const MethodChannel _channel =
+  const MethodChannel('cloudpaymentsflutter');
 
-  HomePage(this.context);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("AppBar",)),
-      body:Builder(
-        builder:(context)=>Container(
-        child: FlatButton(
-          child: Text("open"),
-          onPressed: () async {
-            String platformVersion;
-            // Platform messages may fail, so we use a try/catch PlatformException.
-            try {
-              platformVersion = await Cloudpaymentsflutter.getPlatformVersion(PaymentParameters("","",""),context);
-            } on PlatformException {
-              platformVersion = 'Failed to get platform version.';
-            }
-          },
-        ),
-      ),
-    )
+  static Future<String> getPlatformVersion(PaymentParameters paymentParameters,BuildContext context,GlobalKey<ScaffoldState> scaffoldKey) async {
+    var map = paymentParameters.toMap();
+    scaffoldKey.currentState.showBottomSheet(
+            (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            FlatButton(
+              child: Text('Карта'),
+              onPressed: () async {
+                await _channel.invokeMethod('show_3ds',map);
+              },
+            ),
+            Text('Google pay'),
+            Text('Сохраненная 8226')
+          ],
+        )
     );
+    final String version = await _channel.invokeMethod('getPlatformVersion',map);
+    return version;
   }
 }

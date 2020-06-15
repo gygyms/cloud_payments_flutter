@@ -61,7 +61,7 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
     //  var paymentParameters = PaymentParameters(call.arguments as HashMap<String, String>)
       var card = CPCard(cardNumber, cardDate, cardCVV)
       var cryptogram = card.cardCryptogram("pk_4188676afe1f5e9fb8160c3f7377a")
-      result.success("card number validation result: ${cryptogram}")
+      result.success("${cryptogram}")
     } else {
       if(call.method == "show_3ds"){
         Log.d("3ds","called");
