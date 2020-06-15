@@ -6,18 +6,17 @@ import 'package:flutter/services.dart';
 
 class Cloudpaymentsflutter {
   static const MethodChannel _channel =
-      const MethodChannel('cloudpaymentsflutter');
+  const MethodChannel('cloudpaymentsflutter');
 
-  static Future<String> getPlatformVersion(PaymentParameters paymentParameters,BuildContext context) async {
+  static Future<String> getPlatformVersion(PaymentParameters paymentParameters,BuildContext context,GlobalKey<ScaffoldState> scaffoldKey) async {
     var map = paymentParameters.toMap();
-    showBottomSheet(
-        context: context,
-        builder: (context) => Column(
+    scaffoldKey.currentState.showBottomSheet(
+            (context) => Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             FlatButton(
-                child: Text('Карта'),
+              child: Text('Карта'),
               onPressed: () async {
                 await _channel.invokeMethod('show_3ds',map);
               },
