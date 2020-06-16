@@ -65,7 +65,10 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
     } else {
       if(call.method == "show_3ds"){
         Log.d("3ds","called");
-        show3ds("yandex.ru","1","1")
+        val url: String? = call.argument<String>("url")
+        val paReq = call.argument<String>("paReq")
+        val transactionId = call.argument<String>("transactionId")
+        url?.let { transactionId?.let { it1 -> paReq?.let { it2 -> show3ds(it, it1, it2) } } }
       }
       result.notImplemented()
     }

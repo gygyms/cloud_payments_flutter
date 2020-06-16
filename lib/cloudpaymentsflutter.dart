@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloudpaymentsflutter/3ds_parameters.dart';
 import 'package:cloudpaymentsflutter/payment_parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,4 +30,10 @@ class Cloudpaymentsflutter {
     final String version = await _channel.invokeMethod('getPlatformVersion',map);
     return version;
   }
-}
+
+  static Future<String> show3Ds(ThreeDsParameters threeDsParameters) async {
+    var map = threeDsParameters.toMap();
+    await _channel.invokeMethod('show_3ds',map);
+
+  }
+  }
