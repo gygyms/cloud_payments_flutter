@@ -14,9 +14,10 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import ru.cloudpayments.sdk.cp_card.CPCard
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment
+import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener
 
 /** CloudpaymentsflutterPlugin */
-class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware {
+class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware,ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener {
   private lateinit var channel : MethodChannel
   private var activity:PluginRegistry.Registrar
 
@@ -89,6 +90,14 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
+  }
+
+  override fun onAuthorizationCompleted(md: String?, paRes: String?) {
+    Log.d("3ds","onAuthorizationCompleted")
+  }
+
+  override fun onAuthorizationFailed(html: String?) {
+    Log.d("3ds","onAuthorizationFailed")
   }
 
 
