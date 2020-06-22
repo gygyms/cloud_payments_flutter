@@ -3,7 +3,7 @@ import 'package:cloudpaymentsflutter/payment_parameters.dart';
 import 'package:cloudpaymentsflutter/payment_callback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-class PaymentCallbackImpl implements PaymentCallback{
+/*class PaymentCallbackImpl implements PaymentCallback{
   @override
   void onCardPaymentCallback(String cryptogram,BuildContext context) {
     print("sended to server");
@@ -14,7 +14,7 @@ class PaymentCallbackImpl implements PaymentCallback{
     print("showing error");
   }
 
-}
+}*/
 
 class HomePage extends StatelessWidget {
   BuildContext context;
@@ -26,7 +26,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var callback = PaymentCallbackImpl();
+    var callback = PaymentCallback((cryptogram,context){
+      print("sended to server");
+    },(error,context){
+      print("showing error");
+    });
     return Scaffold(
       key:scaffoldKey,
       appBar: AppBar(title: Text("AppBar",)),
