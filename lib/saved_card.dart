@@ -10,12 +10,12 @@ class SavedCard{
   SavedCard(this.name, this.expirationDate, this.firstDigits, this.lastDigits,
       this.type,this.id);
 
-  SavedCard.fromJson(Map<String,String> json){
-    this.name = json['name'];
-    this.expirationDate = json['exp_date'];
-    this.firstDigits = json['first_six'];
-    this.lastDigits = json['last_four'];
-    this.type = json['type'];
-    this.id = json['id'];
+  SavedCard.fromJson(Map<String,dynamic> json){
+    this.name = json['name'].toString();
+    this.expirationDate = json['exp_date'].toString();
+    this.firstDigits = json['first_six'].toString();
+    this.lastDigits = json['last_four'].toString();
+    this.type = json['type'].toString();
+    this.id = json['id'].toString();
   }
 }
