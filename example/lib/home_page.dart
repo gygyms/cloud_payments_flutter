@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
             String platformVersion;
             // Platform messages may fail, so we use a try/catch PlatformException.
             try {
-              platformVersion = await Cloudpaymentsflutter.getPlatformVersion(List<SavedCard>()..add(SavedCard("saved_card1","xz"))..add(SavedCard("saved_card2","xz2")),"pt_000000",context,scaffoldKey,
+              platformVersion = await Cloudpaymentsflutter.getPlatformVersion(List<SavedCard>()..add(SavedCard("saved_card1",'09/22','833344','4444','Mastercard','1'))..add(SavedCard("saved_card2",'09/22','822244','1111','Mastercard','2')),"pt_000000",context,scaffoldKey,
                   callback);
             } on PlatformException {
               platformVersion = 'Failed to get platform version.';

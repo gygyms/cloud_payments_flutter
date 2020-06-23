@@ -105,7 +105,7 @@ class PaymentMethodsWidget extends StatelessWidget {
               return FlatButton(
                 child: Text(savedCards[index].name),
                 onPressed: () async {
-                  paymentCallback.onRecurrentPaymentCallback(savedCards[index].token,context);
+                  paymentCallback.onRecurrentPaymentCallback(savedCards[index].id,context);
                 },
               );
             }),
