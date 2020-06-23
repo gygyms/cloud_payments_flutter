@@ -3,21 +3,26 @@ import 'dart:async';
 import 'package:cloudpaymentsflutter/3ds_parameters.dart';
 import 'package:cloudpaymentsflutter/payment_callback.dart';
 import 'package:cloudpaymentsflutter/payment_parameters.dart';
+import 'package:cloudpaymentsflutter/saved_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Cloudpaymentsflutter {
   static const MethodChannel _channel =
-      const MethodChannel('cloudpaymentsflutter');
+  const MethodChannel('cloudpaymentsflutter');
 
-  static Future<String> getPlatformVersion(PaymentParameters paymentParameters,
-      BuildContext context, GlobalKey<ScaffoldState> scaffoldKey,PaymentCallback paymentCallback) async {
-    var map = paymentParameters.toMap();
+  static Future<String> getPlatformVersion(List<SavedCard> savedCards,
+      String publicId,
+      BuildContext context, GlobalKey<ScaffoldState> scaffoldKey,
+      PaymentCallback paymentCallback) async {
     scaffoldKey.currentState.showBottomSheet((context) =>
-        PaymentWidget(context, scaffoldKey, GlobalKey<NavigatorState>(),paymentParameters.publicId,paymentCallback));
-  /*  final String version =
+        PaymentWidget(
+            context, scaffoldKey, GlobalKey<NavigatorState>(), publicId,
+            savedCards, paymentCallback));
+    /*  final String version =
         await _channel.invokeMethod('getPlatformVersion', map);
-    */return "";
+    */
+    return "";
   }
 
   static Future<String> show3Ds(ThreeDsParameters threeDsParameters) async {
@@ -31,12 +36,14 @@ class PaymentWidget extends StatefulWidget {
   BuildContext context;
   GlobalKey<ScaffoldState> scaffoldKey;
   GlobalKey<NavigatorState> navigatorKey;
+  List<SavedCard> savedCards;
   final String publicId;
 
   @override
   State createState() => PaymentWidgetState();
 
-  PaymentWidget(this.context, this.scaffoldKey, this.navigatorKey,this.publicId,this.paymentCallback);
+  PaymentWidget(this.context, this.scaffoldKey, this.navigatorKey,
+      this.publicId, this.savedCards, this.paymentCallback);
 }
 
 class PaymentWidgetState extends State<PaymentWidget> {
@@ -45,10 +52,11 @@ class PaymentWidgetState extends State<PaymentWidget> {
   @override
   void initState() {
     super.initState();
-    showingWidget = PaymentMethodsWidget(context, navigate,widget.publicId,widget.paymentCallback);
-
+    showingWidget = PaymentMethodsWidget(
+        context, navigate, widget.publicId,widget.savedCards, widget.paymentCallback);
   }
- //Navigator navigator;
+
+  //Navigator navigator;
   @override
   Widget build(BuildContext context) {
     /* navigator = Navigator(
@@ -73,8 +81,10 @@ class PaymentMethodsWidget extends StatelessWidget {
   Function navigate;
   final String publicId;
   PaymentCallback paymentCallback;
+  List<SavedCard> savedCards;
 
-  PaymentMethodsWidget(this.context, this.navigate,this.publicId,this.paymentCallback);
+  PaymentMethodsWidget(this.context, this.navigate, this.publicId,
+      this.savedCards, this.paymentCallback);
 
   @override
   Widget build(BuildContext context) {
@@ -88,16 +98,22 @@ class PaymentMethodsWidget extends StatelessWidget {
             //await _channel.invokeMethod('show_3ds',map);
           },
         ),
-        FlatButton(
-          child: Text('Сохраненная карта'),
-          onPressed: () async {
-            //await _channel.invokeMethod('show_3ds',map);
-          },
-        ),
+        ListView.builder(
+          shrinkWrap: true,
+            itemCount: savedCards.length,
+            itemBuilder: (context, index) {
+              return FlatButton(
+                child: Text(savedCards[index].name),
+                onPressed: () async {
+                  paymentCallback.onRecurrentPaymentCallback(savedCards[index].token,context);
+                },
+              );
+            }),
+
         FlatButton(
           child: Text('Карта'),
           onPressed: () async {
-            navigate(CardPaymentWidget(publicId,paymentCallback));
+            navigate(CardPaymentWidget(publicId, paymentCallback));
             //await _channel.invokeMethod('show_3ds',map);
           },
         ),
@@ -113,7 +129,7 @@ class CardPaymentWidget extends StatefulWidget {
   PaymentCallback paymentCallback;
 
 
-  CardPaymentWidget(this.publicId,this.paymentCallback);
+  CardPaymentWidget(this.publicId, this.paymentCallback);
 
   @override
   State<StatefulWidget> createState() => CardPaymentWidgetState();
@@ -122,10 +138,10 @@ class CardPaymentWidget extends StatefulWidget {
 class CardPaymentWidgetState extends State<CardPaymentWidget> {
   static const MethodChannel _channel =
   const MethodChannel('cloudpaymentsflutter');
-  String cardNumber="";
-  String date="";
-  String cvc="";
-  String name="";
+  String cardNumber = "";
+  String date = "";
+  String cvc = "";
+  String name = "";
 
 
   @override
@@ -133,57 +149,76 @@ class CardPaymentWidgetState extends State<CardPaymentWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TextField(
-          decoration: const InputDecoration(
-              hintText: 'Card number'),
-          onChanged: (text) {
-            cardNumber = text;
-            print("First text field: $text");
-          },
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+          child: TextField(
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+                hintText: 'Card number'),
+            onChanged: (text) {
+              cardNumber = text;
+              print("First text field: $text");
+            },
+          ),
         ),
         Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Expanded(
-              child: TextField(
-                decoration: const InputDecoration(
-                    hintText: 'Date'),
-                onChanged: (text) {
-                  date = text;
-                  print("First text field: $text");
-                },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: 'Date',
+                  ),
+                  onChanged: (text) {
+                    date = text;
+                    print("First text field: $text");
+                  },
+                ),
               ),
             ),
             Expanded(
-              child: TextField(
-                decoration: const InputDecoration(
-                    hintText: 'CVC'),
-                onChanged: (text) {
-                  cvc = text;
-                  print("First text field: $text");
-                },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 16.0),
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: 'CVC'),
+                  onChanged: (text) {
+                    cvc = text;
+                    print("First text field: $text");
+                  },
+                ),
               ),
             ),
 
           ],
         ),
-        TextField(
-          decoration: const InputDecoration(
-              hintText: 'Card holder'),
-          onChanged: (text) {
-            name = text;
-            print("First text field: $text");
-          },
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+          child: TextField(
+            decoration: const InputDecoration(
+                hintText: 'Card holder'),
+            onChanged: (text) {
+              name = text;
+              print("First text field: $text");
+            },
+          ),
         ),
         FlatButton(
           child: Text('Оплатить'),
           onPressed: () async {
             Navigator.pop(context);
-            _channel.invokeMethod('getPlatformVersion', PaymentParameters(cardNumber,date,cvc,widget.publicId).toMap()).catchError((onError){
-              widget.paymentCallback.onCardPaymentError(onError.toString(),context);
+            _channel.invokeMethod('getPlatformVersion',
+                PaymentParameters(cardNumber, date, cvc, widget.publicId)
+                    .toMap()).catchError((onError) {
+              widget.paymentCallback.onCardPaymentError(
+                  onError.toString(), context);
             }).then((value) {
-              if(value!=null)
-                widget.paymentCallback.onCardPaymentCallback(value,context);
+              if (value != null)
+                widget.paymentCallback.onCardPaymentCallback(value, context);
             }
             );
             //await _channel.invokeMethod('show_3ds',map);

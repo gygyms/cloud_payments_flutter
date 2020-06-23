@@ -1,5 +1,5 @@
 import 'package:cloudpaymentsflutter/cloudpaymentsflutter.dart';
-import 'package:cloudpaymentsflutter/payment_parameters.dart';
+import 'package:cloudpaymentsflutter/saved_card.dart';
 import 'package:cloudpaymentsflutter/payment_callback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +30,8 @@ class HomePage extends StatelessWidget {
       print("sended to server");
     },(error,context){
       print("showing error");
+    },(token,context){
+      print(token);
     });
     return Scaffold(
       key:scaffoldKey,
@@ -42,7 +44,7 @@ class HomePage extends StatelessWidget {
             String platformVersion;
             // Platform messages may fail, so we use a try/catch PlatformException.
             try {
-              platformVersion = await Cloudpaymentsflutter.getPlatformVersion(PaymentParameters("00","00","00","pt_000000"),context,scaffoldKey,
+              platformVersion = await Cloudpaymentsflutter.getPlatformVersion(List<SavedCard>()..add(SavedCard("saved_card1","xz"))..add(SavedCard("saved_card2","xz2")),"pt_000000",context,scaffoldKey,
                   callback);
             } on PlatformException {
               platformVersion = 'Failed to get platform version.';
