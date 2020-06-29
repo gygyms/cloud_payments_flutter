@@ -10,6 +10,6 @@
 
 @implementation CloudpaymentsflutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftCloudpaymentsflutterPlugin registerWithRegistrar:registrar];
+    [CloudpaymentsflutterPlugin registerWithRegistrar:registrar];
 }
 @end

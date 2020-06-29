@@ -77,6 +77,8 @@ class PaymentWidgetState extends State<PaymentWidget> {
 }
 
 class PaymentMethodsWidget extends StatelessWidget {
+  static const MethodChannel _channel =
+  const MethodChannel('cloudpaymentsflutter');
   BuildContext context;
   Function navigate;
   final String publicId;
@@ -95,6 +97,15 @@ class PaymentMethodsWidget extends StatelessWidget {
         FlatButton(
           child: Text('Google pay'),
           onPressed: () async {
+            _channel.invokeMethod('google_pay',
+                {'public_id':publicId}).catchError((onError) {
+              paymentCallback.onCardPaymentError(
+                  onError.toString(), context);
+            }).then((value) {
+              if (value != null)
+                paymentCallback.onCardPaymentCallback(value, context);
+            }
+            );
             //await _channel.invokeMethod('show_3ds',map);
           },
         ),
