@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import com.google.android.gms.wallet.AutoResolveHelper
+import com.google.android.gms.wallet.PaymentData
 import io.flutter.app.FlutterFragmentActivity
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.GeneratedPluginRegistrant
-import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener
+import xdev.team.cloudpaymentsflutter.CloudpaymentsflutterPlugin
 
 
 class MainActivity: FlutterFragmentActivity() {
@@ -17,23 +19,22 @@ class MainActivity: FlutterFragmentActivity() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-       // when (requestCode) {
-            Log.d("gpay",requestCode.toString())
-           /* LOAD_PAYMENT_DATA_REQUEST_CODE -> {
+        when (requestCode) {
+            CloudpaymentsflutterPlugin.REQUEST_GOOGLE_PLAY_CODE -> {
                 when (resultCode) {
                     Activity.RESULT_OK -> {
                         data?.let {
-                            onPaymentSuccess(PaymentData.getFromIntent(data))
+                            val paymentData = PaymentData.getFromIntent(data);
+                            val tokenGP = paymentData?.getPaymentMethodToken()?.getToken()
                         }
                     }
                     Activity.RESULT_CANCELED -> {
                     }
                     AutoResolveHelper.RESULT_ERROR -> {
-                        onError(AutoResolveHelper.getStatusFromIntent(data)?.statusCode)
+                        AutoResolveHelper.getStatusFromIntent(data)?.statusCode
                     }
                 }
-                mGooglePayButton.isClickable = true
-            }*/
-      //  }
+            }
+        }
     }
 }

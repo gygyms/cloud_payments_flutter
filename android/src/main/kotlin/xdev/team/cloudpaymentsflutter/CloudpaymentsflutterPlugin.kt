@@ -44,6 +44,8 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
 
 
   companion object {
+    var REQUEST_GOOGLE_PLAY_CODE = 138
+
     @JvmStatic
     fun registerWith(registrar: PluginRegistry.Registrar) {
       val channel = MethodChannel(registrar.messenger(), "cloudpaymentsflutter")
@@ -86,9 +88,9 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
   }
 
   fun show3ds(url:String,transactionId:String,paReq:String){
-    Log.d("3ds","called method");
-    ((activity).activity() as FlutterFragmentActivity).supportFragmentManager?.let {
-      Log.d("3ds","supportFragmentManager exists");
+    Log.d("3ds","called method")
+    ((activity).activity() as FlutterFragmentActivity).supportFragmentManager.let {
+      Log.d("3ds","supportFragmentManager exists")
       ThreeDsDialogFragment.newInstance(url,
               transactionId,
               paReq)
@@ -138,8 +140,8 @@ class CloudpaymentsflutterPlugin: FlutterPlugin, MethodCallHandler,ActivityAware
             .setUiRequired(true)
             .build()
     val futurePaymentData = mPaymentsClient.loadPaymentData(paymentData)
-    AutoResolveHelper.resolveTask(futurePaymentData, activity.activity(), 1)
-     // val tokenGP = paymentData.getPaymentMethodToken().getToken()
+    AutoResolveHelper.resolveTask(futurePaymentData, activity.activity(), REQUEST_GOOGLE_PLAY_CODE)
+
   }
 
   /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
